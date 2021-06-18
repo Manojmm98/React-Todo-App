@@ -5,20 +5,14 @@ export default class todo extends Component {
         super(props);
         this.state = {
     tasks:[{id:1,name: 'task 1'},{id:2,name: 'task 2'},{id:3,name: 'task 3'},{id:4,name: 'task 4'}],
-    currentTask:''
         }
     }
     
-    handleChange =(e) =>{
-        let cval = e.target.value;
-        this.setState({currentTask:cval});
-    }
-    handleClick=()=>{
+    handleClick=(task)=>{
         //console.log(this.state.currentTask);
-        let newTaskarray =[...this.state.tasks,{id:this.state.tasks.length+1,name:this.state.currentTask}];
+        let newTaskarray =[...this.state.tasks,{id:this.state.tasks.length+1,name:task}];
         this.setState({
             tasks:newTaskarray,
-            currentTask:''
                       
                             })
     }
@@ -34,7 +28,7 @@ export default class todo extends Component {
     render() {
         return (
             <>
-            <InputComponent currTasks={this.state.currentTask} handleChange={this.handleChange} handleClick={this.handleClick} />
+            <InputComponent  handleClick={this.handleClick} />
             <TasklistComponent tasks={this.state.tasks} onDelete={this.onDelete}/>        
             </>
         
@@ -53,15 +47,29 @@ export default class todo extends Component {
 
 // components for inputcontainer
 
+// we are only using currentTask here so we declare it here so that we did not declare it 
+//outside component because we using it after input box created if we creatwd it globally then when page will reload it will be render
+
 class InputComponent extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            currentTask:''
+        }
+    }
+    handleChange=(e) => {
+        this.setState({currentTask:e.target.value})
     }
     render() {
         return (
             <div className="input-container">
-                    <input type="text" value={this.props.currTasks} onChange={this.props.handleChange}></input>
-                    <button onClick={this.props.handleClick}>Add</button>
+                    <input type="text" value={this.state.currentTask} 
+                    onChange={this.handleChange}></input>
+                    <button disabled={this.state.currentTask==''} onClick={()=>{
+                        this.props.handleClick(this.state.currentTask);
+                        this.setState({currentTask:''})
+                     
+                    }}>Add</button>
                 </div>
         )
     }
